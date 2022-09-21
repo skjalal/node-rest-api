@@ -3,35 +3,51 @@ const { validationResult } = require("express-validator");
 const Post = require("../models/post");
 
 exports.getPosts = (req, res, next) => {
-  res.status(200).json({
-    posts: [
-      {
-        _id: "1",
-        title: "First Post",
-        content: "This is first post!",
-        imageUrl: "images/duck.jpg",
-        creator: { name: "Max" },
-        createdAt: new Date(),
-      },
-    ],
-  });
+  Post.find()
+    .then((posts) =>
+      res.status(200).json({ message: "Records fetched", posts, posts })
+    )
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 404;
+      }
+      next(err);
+    });
+};
+
+exports.getPost = (req, res, next) => {
+  const postId = req.params.postId;
+  Post.findById(postId)
+    .then((post) => {
+      res.status(200).json({ message: "Post found", post, post });
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 404;
+      }
+      next(err);
+    });
 };
 
 exports.createPost = (req, res, next) => {
   const errors = validationResult(req);
-  console.log(errors);
   if (!errors.isEmpty()) {
-    return res.status(422).json({
-      message: "Data is incorrect",
-      errors: errors.array(),
-    });
+    const error = new Error("Data is incorrect");
+    error.statusCode = 422;
+    throw error;
   }
+  if (!req.file) {
+    const error = new Error("No image provided");
+    error.statusCode = 422;
+    throw error;
+  }
+  const imageUrl = req.file.path;
   const title = req.body.title;
   const content = req.body.content;
   const post = new Post({
     title: title,
     content: content,
-    imageUrl: "images/duck.jpg",
+    imageUrl: imageUrl.substr(4).replaceAll("\\", "/"),
     creator: { name: "Max" },
   });
   post
@@ -42,5 +58,5 @@ exports.createPost = (req, res, next) => {
         post: result,
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => next(err));
 };
