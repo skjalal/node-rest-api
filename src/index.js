@@ -10,6 +10,10 @@ const mongoose = require("mongoose");
 
 const multer = require("multer");
 
+const helmet = require("helmet");
+
+const compression = require("compression");
+
 const feedRoutes = require("./routes/feed");
 const authRoutes = require("./routes/auth");
 
@@ -39,6 +43,10 @@ const fileFilter = (req, file, cb) => {
 app.use(bodyParser.json());
 
 app.use(multer({ storage: storage, fileFilter: fileFilter }).single("image"));
+
+app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
+
+app.use(compression());
 
 app.use("/images", express.static(path.join(__dirname, "images")));
 
