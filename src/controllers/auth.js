@@ -84,6 +84,31 @@ exports.isAuth = (req, res, next) => {
     throw error;
   }
   req.userId = decodedToken.userId;
-  console.log("Authorized user...");
   next();
+};
+
+exports.getUserStatus = (req, res, next) => {
+  User.findById(req.userId)
+    .then((user) =>
+      res.status(200).json({ message: "Status loaded", status: user.status })
+    )
+    .catch((err) => next(err));
+};
+
+exports.updateUserStatus = (req, res, next) => {
+  const newStatus = req.body.status;
+  if (!newStatus) {
+    const error = new Error("Status should not be empty");
+    error.statusCode = 422;
+    throw error;
+  }
+  User.findById(req.userId)
+    .then((user) => {
+      user.status = newStatus;
+      return user.save();
+    })
+    .then((user) =>
+      res.status(200).json({ message: "Status loaded", status: user.status })
+    )
+    .catch((err) => next(err));
 };
