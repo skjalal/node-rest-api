@@ -14,6 +14,8 @@ const helmet = require("helmet");
 
 const compression = require("compression");
 
+const morgan = require("morgan");
+
 const feedRoutes = require("./routes/feed");
 const authRoutes = require("./routes/auth");
 
@@ -56,6 +58,8 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   next();
 });
+
+app.use(morgan("combined"));
 
 app.use("/feed", feedRoutes);
 app.use("/auth", authRoutes);

@@ -32,6 +32,7 @@ exports.signup = async (req, res, next) => {
 };
 
 exports.login = async (req, res, next) => {
+  console.log("Loggging user ...");
   const email = req.body.email;
   const password = req.body.password;
   try {
