@@ -4,7 +4,7 @@
   "description": "Rest API Application",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha ./src/test",
     "start": "node ./src/index.js",
     "start:dev": "nodemon ./src/index.js"
   },
@@ -24,6 +24,9 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.20"
+    "chai": "^4.3.6",
+    "mocha": "^10.0.0",
+    "nodemon": "^2.0.20",
+    "sinon": "^14.0.0"
   }
 }
